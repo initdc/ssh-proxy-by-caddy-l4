@@ -1,0 +1,12 @@
+FROM alpine
+
+# speed up domain
+ADD "https://static.0fd.net/caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fmholt%2Fcaddy-l4" /usr/local/bin/caddy
+RUN set -e \
+    && chmod +x /usr/local/bin/caddy
+
+WORKDIR /root
+COPY caddy.json .
+
+EXPOSE 2201
+CMD ["/usr/local/bin/caddy", "run", "--config", "/root/caddy.json"]
