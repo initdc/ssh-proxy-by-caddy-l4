@@ -68,7 +68,9 @@ ref: https://salesjobinfo.com/multi-arch-container-images-for-docker-and-kuberne
 
 2. for pushing
 
-   `docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t initdc/caddy-l4:latest . --push`
+   `docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t initdc/caddy-l4:v$(TZ=Asia/Shanghai date +%Y.%m.%d) . --push`
+
+   > `latest` -> `v$(TZ=Asia/Shanghai date +%Y.%m.%d)`
 
    > replace `initdc` with your docker registry user name.
 
