@@ -10,15 +10,32 @@ Solving `git@github.com` network problem in this case.
 
 **![DANGER] Private key will send to mirror server, deploy server by yourself**
 
-## Build
-
-`docker buildx build -t caddy-l4:x1 .`
-
-> `-t` for tag: `name:version`
-
 ## Run
 
-`docker run --name caddy-l4 -dp 2201:2201 caddy-l4:x1`
+`docker run --name caddy-l4 -dp 2201:2201 initdc/caddy-l4:latest`
+
+You need set private key and port for ssh
+
+```sh
+# ~/.ssh/config
+
+Host github.com
+    Hostname github.com
+    IdentityFile ~/.ssh/id_ed25519_github
+    User git
+
+Host localhost
+    Hostname localhost
+    IdentityFile ~/.ssh/id_ed25519_github
+    Port 2201
+    User git
+
+# ssh.example.com
+Host ssh.example.com
+    Hostname ssh.example.com
+    IdentityFile ~/.ssh/id_ed25519_github
+    User git
+```
 
 ## Test
 
@@ -28,30 +45,46 @@ Solving `git@github.com` network problem in this case.
 
 `git clone git@localhost:initdc/Hello_World.git`
 
-## Custom domain
+## Prepare to build
 
-You need set private key and port for ssh
+change buildx `DRIVER` from `docker` to `docker-container`
 
 ```sh
-Host github.com
-    Hostname github.com
-    IdentityFile ~/.ssh/id_ed25519_github
-    User git
-
-Host mirror.example.com
-    Hostname mirror.example.com
-    IdentityFile ~/.ssh/id_ed25519_github
-    Port 2201
-    User git
+docker buildx create --name mybuilder --driver-opt network=host --use
+docker buildx inspect --bootstrap
 ```
+
+ref: https://salesjobinfo.com/multi-arch-container-images-for-docker-and-kubernetes/
+
+## Build
+
+1. local
+
+   `docker buildx build -t caddy-l4:amd64 . --load`
+
+   `docker buildx build --platform linux/arm64 -t caddy-l4:arm64 . --load`
+
+   > `-t` for local tag: `name:arch`
+
+2. for pushing
+
+   `docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t initdc/caddy-l4:latest . --push`
+
+   > replace `initdc` with your docker registry user name.
+
+   > exclude `linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v6` for my own usage, add more by yourself.
+
+   > check full list with `docker buildx ls`
 
 ## Refs
 
-- https://caddyserver.com/docs/modules/layer4
+- https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port
 
 - https://github.com/mholt/caddy-l4
 
-- https://docs.github.com/en/authentication/troubleshooting-ssh/using-ssh-over-the-https-port
+- https://caddyserver.com/docs/modules/layer4
+
+- https://github.com/ghthor/caddy-l4-docker
 
 ## License
 
