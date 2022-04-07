@@ -47,14 +47,20 @@ Host ssh.example.com
 
 ## Prepare to build
 
-change buildx `DRIVER` from `docker` to `docker-container`
+change buildx `DRIVER` from `docker` to [ `docker-container` or `kubernetes` ]
 
 ```sh
-docker buildx create --name mybuilder --driver-opt network=host --use
-docker buildx inspect --bootstrap
+docker buildx create --name mycontext1 --driver docker-container --use --bootstrap
+
+# or
+docker buildx create --name mycontext1 --driver kubernetes --use --bootstrap
 ```
 
-ref: https://salesjobinfo.com/multi-arch-container-images-for-docker-and-kubernetes/
+refs:
+
+- https://salesjobinfo.com/multi-arch-container-images-for-docker-and-kubernetes/
+
+- https://github.com/docker/buildx/blob/master/docs/reference/buildx_create.md
 
 ## Build
 
