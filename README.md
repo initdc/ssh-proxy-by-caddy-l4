@@ -74,13 +74,13 @@ refs:
 
 2. for pushing
 
-   `docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t initdc/caddy-l4:v$(TZ=Asia/Shanghai date +%Y.%m.%d) . --push`
+   `docker buildx build --platform linux/amd64,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6 -t initdc/caddy-l4:v$(TZ=Asia/Shanghai date +%Y.%m.%d) . --push`
 
    > `latest` -> `v$(TZ=Asia/Shanghai date +%Y.%m.%d)`
 
    > replace `initdc` with your docker registry user name.
 
-   > exclude `linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v6` for my own usage, add more by yourself.
+   > exclude `linux/mips64le,linux/mips64,linux/arm/v5`, because build on alpine:edge
 
    > check full list with `docker buildx ls`
 

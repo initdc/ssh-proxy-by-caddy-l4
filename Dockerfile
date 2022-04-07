@@ -1,16 +1,17 @@
 # syntax=docker/dockerfile:1
-FROM --platform=$TARGETPLATFORM golang:1.17-alpine AS build
+FROM alpine:edge AS build
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
+COPY env.rb /root/env.rb
 RUN set -e \
     && echo "Running on $BUILDPLATFORM, building for $TARGETPLATFORM" \
-    && go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+    && apk --no-cache add ruby ca-certificates wget
     
 RUN set -e \
-    && xcaddy build --with github.com/mholt/caddy-l4 --output /root/caddy
+    && ruby /root/env.rb
     
-FROM --platform=$TARGETPLATFORM alpine
+FROM --platform=$TARGETPLATFORM scratch
 COPY --from=build /root/caddy /usr/local/bin/caddy
 
 WORKDIR /root
