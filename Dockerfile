@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM golang:1.17-alpine AS build
+FROM --platform=$TARGETPLATFORM golang:1.17-alpine AS build
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 
@@ -12,7 +12,7 @@ RUN set -e \
 RUN set -e \
     && ruby /root/env.rb
     
-FROM --platform=$TARGETPLATFORM scratch
+FROM scratch
 COPY --from=build /root/caddy /usr/local/bin/caddy
 
 WORKDIR /root
